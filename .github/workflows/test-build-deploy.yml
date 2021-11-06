@@ -1,68 +1,68 @@
-name: Build and Test
-on:
-  push:
-    branches:
-      - development
-      - staging
+# name: Build and Test
+# on:
+#   push:
+#     branches:
+#       - development
+#       - staging
 
-env:
-  FUNCTION_NAME: post-confirmation-trigger
-jobs:
-  lint-and-test:
-    runs-on: ubuntu-latest
+# env:
+#   FUNCTION_NAME: post-confirmation-trigger
+# jobs:
+#   lint-and-test:
+#     runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout repository code
-        uses: actions/checkout@v2
+#     steps:
+#       - name: Checkout repository code
+#         uses: actions/checkout@v2
 
-      - name: Set up node 14
-        uses: actions/setup-node@v2
-        with:
-          node-version: 14.x
+#       - name: Set up node 14
+#         uses: actions/setup-node@v2
+#         with:
+#           node-version: 14.x
 
-      - name: Install Dependencies
-        run: yarn install
+#       - name: Install Dependencies
+#         run: yarn install
 
-      # - name: Lint
-      # run: yarn lint
+#       # - name: Lint
+#       # run: yarn lint
 
-  build-and-deploy:
-    runs-on: ubuntu-latest
-    needs: lint-and-test
+#   build-and-deploy:
+#     runs-on: ubuntu-latest
+#     needs: lint-and-test
 
-    steps:
-      - name: Checkout repository code
-        uses: actions/checkout@v1
+#     steps:
+#       - name: Checkout repository code
+#         uses: actions/checkout@v1
 
-      - name: Set up node 14
-        uses: actions/setup-node@v2
-        with:
-          node-version: 14.x
+#       - name: Set up node 14
+#         uses: actions/setup-node@v2
+#         with:
+#           node-version: 14.x
 
-      - name: Set Steps Vars
-        id: vars
-        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+#       - name: Set Steps Vars
+#         id: vars
+#         run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
+#       - name: Configure AWS credentials
+#         uses: aws-actions/configure-aws-credentials@v1
+#         with:
+#           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#           aws-region: us-east-1
 
-      - name: Install Dependencies
-        run: yarn install
+#       - name: Install Dependencies
+#         run: yarn install
 
-      - name: Build Lambda
-        run: yarn dist
+#       - name: Build Lambda
+#         run: yarn dist
 
-      - name: Upload to S3
-        run:
-          aws s3 cp ./dist/function.zip s3://${{ steps.vars.outputs.branch
-          }}-${FUNCTION_NAME}/function.zip
+#       - name: Upload to S3
+#         run:
+#           aws s3 cp ./dist/function.zip s3://${{ steps.vars.outputs.branch
+#           }}-${FUNCTION_NAME}/function.zip
 
-      - name: Deploy Lambda
-        run: |
-          aws lambda update-function-code \
-          --function-name ${{ steps.vars.outputs.branch }}-${FUNCTION_NAME} \
-          --s3-bucket ${{ steps.vars.outputs.branch }}-${FUNCTION_NAME} --s3-key function.zip
+#       - name: Deploy Lambda
+#         run: |
+#           aws lambda update-function-code \
+#           --function-name ${{ steps.vars.outputs.branch }}-${FUNCTION_NAME} \
+#           --s3-bucket ${{ steps.vars.outputs.branch }}-${FUNCTION_NAME} --s3-key function.zip
