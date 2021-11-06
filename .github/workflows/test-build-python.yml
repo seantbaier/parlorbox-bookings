@@ -6,7 +6,7 @@ on:
       - staging
 
 env:
-  FUNCTION_NAME: post-confirmation-lambda
+  FUNCTION_NAME: post-confirmation-trigger
 jobs:
   lint-and-test:
     runs-on: ubuntu-latest
