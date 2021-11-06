@@ -1,0 +1,52 @@
+{
+  "name": "mangodeck-post-confirmation-trigger",
+  "version": "2.0.0",
+  "description": "",
+  "main": "index.js",
+  "engines": {
+    "node": ">=14"
+  },
+  "scripts": {
+    "start": "nodemon -r dotenv/config src/index.ts",
+    "invoke": "NODE_ENV=development ts-node -r dotenv/config -e 'require(\"./src/index\").handler({})'",
+    "test": "jest",
+    "clean": "rm -rf ./dist && rm -rf ./build",
+    "build": "npm run esbuild",
+    "zip": "rm -rf dist/function.zip && cd dist && zip -q -r function.zip src",
+    "dist": "tsc && npm run build && npm run zip",
+    "esbuild": "esbuild --bundle --minify --keep-names --sourcemap --sources-content=false --target=node14 --platform=node --outfile=dist/src/index.js ./src/index.js",
+    "upload": "aws s3 cp ./dist/function.zip s3://development-post-confirmation-trigger/function.zip",
+    "update": "aws lambda update-function-code --function-name development-post-confirmation-trigger --s3-bucket development-post-confirmation-trigger --s3-key function.zip",
+    "deploy": "npm run dist && cp .env dist/.env && npm run upload && npm run update"
+  },
+  "dependencies": {
+    "@apollo/client": "^3.4.16",
+    "apollo-boost": "^0.4.9",
+    "apollo-link": "^1.2.14",
+    "apollo-link-http": "^1.5.17",
+    "aws-sdk": "^2.984.0",
+    "axios": "^0.22.0",
+    "cross-fetch": "^3.1.4",
+    "dotenv": "^10.0.0",
+    "graphql": "^15.6.1",
+    "node-fetch": "^3.0.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.15.8",
+    "@babel/preset-env": "^7.15.8",
+    "@babel/preset-typescript": "^7.15.0",
+    "@tsconfig/node14": "^1.0.1",
+    "@types/aws-lambda": "^8.10.83",
+    "@types/jest": "^27.0.2",
+    "@types/node": "^16.10.3",
+    "babel-jest": "^27.2.5",
+    "babel-loader": "^8.2.2",
+    "esbuild": "^0.13.4",
+    "husky": "^7.0.2",
+    "jest": "^27.2.5",
+    "nodemon": "^2.0.13",
+    "prettier": "^2.4.1",
+    "ts-node": "^10.2.1",
+    "typescript": "^4.4.3"
+  }
+}

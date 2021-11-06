@@ -1,0 +1,22 @@
+{
+  "version": "1",
+  "region": "us-east-1",
+  "userPoolId": "",
+  "userName": "90d4d57f-9103-41bf-b946-d08a7e904d87",
+  "callerContext": {
+    "awsSdkVersion": "aws-sdk-unknown-unknown",
+    "clientId": ""
+  },
+  "triggerSource": "PostConfirmation_ConfirmSignUp",
+  "request": {
+    "userAttributes": {
+      "sub": "00bb3ce6-48c7-44f7-8f4a-a8dff18c0646",
+      "cognito:email_alias": "sean.t.baier@gmail.com",
+      "email_verified": "true",
+      "cognito:user_status": "CONFIRMED",
+      "email": "sean.t.baier@gmail.com",
+      "custom:userGroup": "sellers"
+    }
+  },
+  "response": {}
+}

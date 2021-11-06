@@ -1,0 +1,88 @@
+name: Build and Test
+on:
+  push:
+    branches:
+      - development
+      - staging
+
+env:
+  FUNCTION_NAME: post-confirmation-lambda
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v2
+
+      - name: Set up python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Lint with flake8
+        run: flake8 .
+
+      - name: Formatting with black
+        run: black .
+
+      - name: Sort imports with isort
+        run: isort .
+
+      - name: run type checks with mypy
+        run: dmypy run -- app/*.py
+
+      - name: Create env file
+        run: cp .env.example .env
+
+      - name: Test with pytest
+        run: pytest
+
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    needs: lint-and-test
+
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v2
+
+      - name: Set up python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      - name: Set Steps Vars
+        id: vars
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Package Dependencies
+        run: pip install --target ./package -r requirements.txt
+
+      - name: Create Zipfile archive of Dependencies
+        run: |
+          cd ./package
+          zip -r9 ../function.zip .
+
+      - name: Add App to Zipfile
+        run: zip -g ./function.zip main.py .env -r app
+
+      - name: Upload to S3
+        run:
+          aws s3 cp ./function.zip s3://${{ steps.vars.outputs.branch
+          }}-${FUNCTION_NAME}/function.zip
+
+      - name: Deploy new Lambda
+        run: |
+          aws lambda update-function-code \
+          --function-name ${{ steps.vars.outputs.branch }}-${FUNCTION_NAME} \
+          --s3-bucket ${{ steps.vars.outputs.branch }}-${FUNCTION_NAME} --s3-key function.zip
