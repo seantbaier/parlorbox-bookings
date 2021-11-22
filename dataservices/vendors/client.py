@@ -1,7 +1,7 @@
 from typing import Optional
+
 import boto3
 from loguru import logger
-
 
 from dataservices.config import settings
 

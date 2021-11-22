@@ -1,10 +1,8 @@
-from typing import Any, Dict
 from datetime import datetime
-
+from typing import Any, Dict
 
 from dataservices.post_confirmation_trigger.event import CognitoTriggerEvent
 from dataservices.vendors import CognitoIdp, Dynamodb
-
 
 client = CognitoIdp()
 dynamodb = Dynamodb()

@@ -1,7 +1,6 @@
 import boto3
 from botocore.config import Config
 from loguru import logger
-from pprint import pprint
 
 config = Config(
     region_name="us-east-1",
@@ -17,7 +16,9 @@ class CognitoIdp:
     def admin_add_user_to_group(self, user_pool_id, username, group_name):
         try:
             response = self.client.admin_add_user_to_group(
-                UserPoolId=user_pool_id, Username=username, GroupName=group_name
+                UserPoolId=user_pool_id,
+                Username=username,
+                GroupName=group_name,
             )
             logger.success(f"username={username}, group={group_name}")
             return response

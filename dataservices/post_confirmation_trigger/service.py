@@ -1,13 +1,8 @@
-from loguru import logger
-
-
-from dataservices.post_confirmation_trigger.event import (
-    CognitoTriggerEvent,
-)
-from dataservices.post_confirmation_trigger.mock_event import mock_cognito_user
 from dataservices.post_confirmation_trigger.controller import (
     PostConfirmationTriggerController,
 )
+from dataservices.post_confirmation_trigger.event import CognitoTriggerEvent
+from dataservices.post_confirmation_trigger.mock_event import mock_cognito_user
 
 controller = PostConfirmationTriggerController()
 

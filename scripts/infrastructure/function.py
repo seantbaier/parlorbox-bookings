@@ -1,5 +1,6 @@
-from loguru import logger
 from pathlib import Path
+
+from loguru import logger
 
 
 def get_function(client, function_name: str):

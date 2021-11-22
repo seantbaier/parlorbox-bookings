@@ -1,9 +1,8 @@
 from dotenv import load_dotenv
 from loguru import logger
 
-
 from scripts.infrastructure.client import get_client
-from scripts.infrastructure.function import get_function, delete_function
+from scripts.infrastructure.function import delete_function, get_function
 
 load_dotenv()
 

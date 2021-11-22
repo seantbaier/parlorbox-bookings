@@ -2,7 +2,6 @@ import boto3
 from dotenv import load_dotenv
 from loguru import logger
 
-
 load_dotenv()
 
 APP_NAME = "mangodeck"

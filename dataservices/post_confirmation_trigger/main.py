@@ -1,14 +1,14 @@
-from typing import Any
-from loguru import logger
 from pprint import pprint
+from typing import Any
 
+from loguru import logger
 
 from dataservices.post_confirmation_trigger.controller import (
     PostConfirmationTriggerController,
 )
 from dataservices.post_confirmation_trigger.event import CognitoTriggerEvent
-from dataservices.post_confirmation_trigger.service import PostConfirmationService
 from dataservices.post_confirmation_trigger.mock_event import mock_event_data
+from dataservices.post_confirmation_trigger.service import PostConfirmationService
 
 
 def local_setup(service: PostConfirmationService):

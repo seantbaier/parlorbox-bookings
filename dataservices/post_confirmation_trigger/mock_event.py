@@ -1,4 +1,3 @@
-from dataservices.post_confirmation_trigger.event import CognitoTriggerEvent
 from dataservices.config import settings
 
 
@@ -28,14 +27,14 @@ def mock_event_data(user):
     for k, v in attrs.items():
         user_attributes[k] = v
 
-    temp = {
-        "sub": attrs["sub"],
-        "cognito:email_alias": "sean.t.baier@gmail.com",
-        "email_verified": "true",
-        "cognito:user_status": "CONFIRMED",
-        "email": "sean.t.baier@gmail.com",
-        "custom:userGroup": "virtualAssistants",
-    }
+    # temp = {
+    #     "sub": attrs["sub"],
+    #     "cognito:email_alias": "sean.t.baier@gmail.com",
+    #     "email_verified": "true",
+    #     "cognito:user_status": "CONFIRMED",
+    #     "email": "sean.t.baier@gmail.com",
+    #     "custom:userGroup": "virtualAssistants",
+    # }
 
     return {
         "is_local": True,
@@ -43,7 +42,10 @@ def mock_event_data(user):
         "region": "us-east-1",
         "userPoolId": settings.USER_POOL_ID,
         "userName": "90d4d57f-9103-41bf-b946-d08a7e904d87",
-        "callerContext": {"awsSdkVersion": "aws-sdk-unknown-unknown", "clientId": ""},
+        "callerContext": {
+            "awsSdkVersion": "aws-sdk-unknown-unknown",
+            "clientId": "",
+        },
         "triggerSource": "PostConfirmation_ConfirmSignUp",
         "request": {"userAttributes": user["UserAttributes"]},
         "response": {},

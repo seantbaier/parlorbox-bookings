@@ -1,6 +1,6 @@
 from typing import Any, Dict, List
-from loguru import logger
 
+from loguru import logger
 
 from dataservices.vendors.client import get_resource
 
