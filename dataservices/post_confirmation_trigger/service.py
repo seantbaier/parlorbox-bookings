@@ -21,7 +21,9 @@ class PostConfirmationService:
         return self.event
 
     def get_cognito_user(self, username: str, user_pool_id: str):
-        user = controller.get_cognito_user(username=username, user_pool_id=user_pool_id)
+        user = controller.get_cognito_user(
+            username=username, user_pool_id=user_pool_id
+        )
         return user
 
     def create_cognito_user(self) -> CognitoTriggerEvent:
@@ -33,12 +35,14 @@ class PostConfirmationService:
             user = self.get_cognito_user(
                 response["userAttributes"]["Username"], response["UserPoolId"]
             )
-        return self.get_cognito_user
+        return user
 
     def delete_cognito_user(self) -> None:
         user = mock_cognito_user()
         user = self.get_cognito_user(user["Username"], user["UserPoolId"])
 
         if user:
-            user = controller.delete_cognito_user(user)
+            user = controller.delete_cognito_user(
+                username=user["Username"], user_pool_id=user["UserPoolId"]
+            )
         return None

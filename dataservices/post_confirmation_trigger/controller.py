@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Any, Dict
+from typing import Any
 
 from dataservices.post_confirmation_trigger.event import CognitoTriggerEvent
 from dataservices.vendors import CognitoIdp, Dynamodb
@@ -11,17 +11,17 @@ dynamodb = Dynamodb()
 class PostConfirmationTriggerController:
     def __init__(self, event: CognitoTriggerEvent = None):
         if event:
-            self.user_attributes: Dict[str, Any] = event.request.userAttributes
+            self.user_attributes: Any = event.request.userAttributes
             self.user_group: str = event.request.userAttributes.user_group
             self.user_pool_id: str = event.userPoolId
             self.username: str = event.userName
             self.event: CognitoTriggerEvent = event
 
-    def create_cognito_user(self, user: dict) -> CognitoTriggerEvent:
+    def create_cognito_user(self, user: dict) -> Any:
         response = client.admin_create_user(user)
         return response
 
-    def add_user_to_groups(self) -> CognitoTriggerEvent:
+    def add_user_to_groups(self) -> Any:
         client.admin_add_user_to_group(
             user_pool_id=self.user_pool_id,
             group_name=self.user_group,
@@ -31,7 +31,9 @@ class PostConfirmationTriggerController:
         return self.event
 
     def get_cognito_user(self, username: str, user_pool_id: str):
-        response = client.admin_get_user(username=username, user_pool_id=user_pool_id)
+        response = client.admin_get_user(
+            username=username, user_pool_id=user_pool_id
+        )
         return response
 
     def delete_cognito_user(self, username: str, user_pool_id: str):

@@ -1,5 +1,3 @@
-from typing import Any, Dict, List
-
 from loguru import logger
 
 from dataservices.vendors.client import get_resource
@@ -17,7 +15,7 @@ class Dynamodb:
         table_name: str,
         user_pool_id: str,
         username: str,
-        user_attributes: List[Dict[str, Any]],
+        user_attributes: dict,
         tempory_password: str,
     ):
         attributes = []

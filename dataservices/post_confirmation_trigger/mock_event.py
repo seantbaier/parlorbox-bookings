@@ -27,15 +27,6 @@ def mock_event_data(user):
     for k, v in attrs.items():
         user_attributes[k] = v
 
-    # temp = {
-    #     "sub": attrs["sub"],
-    #     "cognito:email_alias": "sean.t.baier@gmail.com",
-    #     "email_verified": "true",
-    #     "cognito:user_status": "CONFIRMED",
-    #     "email": "sean.t.baier@gmail.com",
-    #     "custom:userGroup": "virtualAssistants",
-    # }
-
     return {
         "is_local": True,
         "version": "1",
@@ -50,32 +41,3 @@ def mock_event_data(user):
         "request": {"userAttributes": user["UserAttributes"]},
         "response": {},
     }
-
-
-# user = cognito_user()
-# mock_event = CognitoTriggerEvent(**mock_event_data(user))
-
-
-#  {
-#      'Username': '567af19a-499b-45b5-a8dc-015146453eb1',
-#      'UserAttributes': [
-#          {'Name': 'sub', 'Value': '567af19a-499b-45b5-a8dc-015146453eb1'},
-#          {'Name': 'email', 'Value': 'sean.t.baier+test@gmail.com'},
-#          {'Name': 'custom:userGroup', 'Value': 'seller'}
-#     ],
-#     'UserCreateDate': datetime.datetime(2021, 11, 1, 8, 24, 18, 176000, tzinfo=tzlocal()),
-#     'UserLastModifiedDate': datetime.datetime(2021, 11, 1, 8, 24, 18, 176000, tzinfo=tzlocal()),
-#     'Enabled': True,
-#     'UserStatus': 'FORCE_CHANGE_PASSWORD',
-#     'ResponseMetadata': {
-#         'RequestId': '87b4a17d-9c4c-4440-8b5b-21eb0cc4a20a',
-#         'HTTPStatusCode': 200,
-#         'HTTPHeaders': {
-#             'date': 'Mon, 01 Nov 2021 14:30:59 GMT',
-#             'content-type': 'application/x-amz-json-1.1',
-#             'content-length': '358',
-#             'connection': 'keep-alive',
-#             'x-amzn-requestid': '87b4a17d-9c4c-4440-8b5b-21eb0cc4a20a'
-#         }, 'RetryAttempts': 0
-#     }
-# }

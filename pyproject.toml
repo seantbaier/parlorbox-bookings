@@ -23,6 +23,18 @@ pytest-watch = "^4.2.0"
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
+[tool.black]
+line-length = 79
+target-version = ['py38']
+include = '\.pyi?$'
+exclude = '''/(
+  | \.git
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | \.vscode
+  | docker)/'''
+
 [tool.poetry.scripts]
 "ls:build" = "scripts.infrastructure.build:build"
 "ls:destroy" = "scripts.infrastructure.destroy:destroy"
