@@ -20,8 +20,11 @@ jobs:
         with:
           python-version: 3.8
 
+      - name: Load Environment Variables
+        run: cp .env.example .env
+
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: pip install isort flake8 black mypy pydantic
 
       - name: Lint with flake8
         run: flake8 .
@@ -32,11 +35,11 @@ jobs:
       - name: Sort imports with isort
         run: isort .
 
-      - name: run type checks with mypy
-        run: dmypy run -- app/*.py
+      - name: Run mypy
+        run: mypy .
 
-      - name: Create env file
-        run: cp .env.example .env
+      - name: Install dependencies
+        run: pip install -r requirements.txt
 
       - name: Test with pytest
         run: pytest
@@ -65,24 +68,47 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - name: Package Dependencies
-        run: pip install --target ./package -r requirements.txt
-
-      - name: Create Zipfile archive of Dependencies
+      - name: Login to ECR
         run: |
-          cd ./package
-          zip -r9 ../function.zip .
+          aws ecr get-login-password --region ${{ secrets.AWS_DEFAULT_REGION }} | \
+          docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com
 
-      - name: Add App to Zipfile
-        run: zip -g ./function.zip main.py .env -r app
+      - name: Build Lambda Docker
+        run: docker build -t ${APP_NAME} -f ./Dockerfile.lambda .
 
-      - name: Upload to S3
+      - name: Tag Docker Image
+        run: |
+          docker tag ${APP_NAME}:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/${{ steps.vars.outputs.APP_ENV }}-${APP_NAME}:latest
+
+      - name: Push Docker Image
         run:
-          aws s3 cp ./function.zip s3://${{ steps.vars.outputs.branch
-          }}-${FUNCTION_NAME}/function.zip
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/${{
+          steps.vars.outputs.APP_ENV }}-${APP_NAME}:latest
 
       - name: Deploy new Lambda
         run: |
           aws lambda update-function-code \
-          --function-name ${{ steps.vars.outputs.branch }}-${FUNCTION_NAME} \
-          --s3-bucket ${{ steps.vars.outputs.branch }}-${FUNCTION_NAME} --s3-key function.zip
+          --function-name ${{ steps.vars.outputs.APP_ENV }}-${APP_NAME} \
+          --image-uri ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/${{ steps.vars.outputs.APP_ENV }}-${APP_NAME}:latest
+
+      # - name: Package Dependencies
+      #   run: pip install --target ./package -r requirements.txt
+
+      # - name: Create Zipfile archive of Dependencies
+      #   run: |
+      #     cd ./package
+      #     zip -r9 ../function.zip .
+
+      # - name: Add App to Zipfile
+      #   run: zip -g ./function.zip main.py .env -r app
+
+      # - name: Upload to S3
+      #   run:
+      #     aws s3 cp ./function.zip s3://${{ steps.vars.outputs.branch
+      #     }}-${FUNCTION_NAME}/function.zip
+
+      # - name: Deploy new Lambda
+      #   run: |
+      #     aws lambda update-function-code \
+      #     --function-name ${{ steps.vars.outputs.branch }}-${FUNCTION_NAME} \
+      #     --s3-bucket ${{ steps.vars.outputs.branch }}-${FUNCTION_NAME} --s3-key function.zip
