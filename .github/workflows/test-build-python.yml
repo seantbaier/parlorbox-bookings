@@ -20,29 +20,33 @@ jobs:
         with:
           python-version: 3.8
 
+      - name: Install Poetry
+        run: |
+          curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | POETRY_HOME=/opt/poetry python && \
+          cd /usr/local/bin && \
+          ln -sf /opt/poetry/bin/poetry && \
+          poetry config virtualenvs.create false
+
+      - name: Install dependencies
+        run: poetry install
+
       - name: Load Environment Variables
         run: cp .env.example .env
 
-      - name: Install dependencies
-        run: pip install isort flake8 black mypy pydantic
-
       - name: Lint with flake8
-        run: flake8 .
+        run: poetry run flake8 .
 
       - name: Formatting with black
-        run: black .
+        run: poetry run black .
 
       - name: Sort imports with isort
-        run: isort .
+        run: poetry run isort .
 
       - name: Run mypy
-        run: mypy .
-
-      - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: poetry run mypy .
 
       - name: Test with pytest
-        run: pytest
+        run: poetry run pytest
 
   build-and-deploy:
     runs-on: ubuntu-latest
