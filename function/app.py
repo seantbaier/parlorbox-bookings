@@ -3,6 +3,6 @@ from loguru import logger
 
 
 def handler(event, context):
-    logger.info("testing")
+    logger.info("new")
     print("EVENT=", event)
     return "Hello from AWS Lambda using Python" + sys.version + "!"
