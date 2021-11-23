@@ -85,10 +85,10 @@ jobs:
 
       - name: Tag Docker Image
         run: |
-          docker tag development-studiosauce-post-confirmation-trigger:latest \
+          docker tag ${{ steps.vars.outputs.branch }}-${{ env.APP_NAME }}-${{ env.FUNCTION_NAME }}:latest \
           266568383880.dkr.ecr.us-east-1.amazonaws.com/development-studiosauce-post-confirmation-trigger:latest
 
-        # docker tag ${{ steps.vars.outputs.branch }}-${APP_NAME}-${{ env.FUNCTION_NAME }}:latest \
+        # docker tag ${{ steps.vars.outputs.branch }}-${{ env.APP_NAME }}-${{ env.FUNCTION_NAME }}:latest \
         # ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/${{ steps.vars.outputs.branch }}-${{ env.APP_NAME }}-${{ env.FUNCTION_NAME }}:latest
 
       - name: Push Docker Image
