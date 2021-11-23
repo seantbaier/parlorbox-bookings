@@ -6,18 +6,17 @@ RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-
   ln -sf /opt/poetry/bin/poetry && \
   poetry config virtualenvs.create false
 
-# # Copy poetry.lock* in case it doesn't exist in the repo
+
 COPY ./pyproject.toml ./poetry.lock* ${LAMBDA_TASK_ROOT}/
 
 # RUN cd ${LAMBDA_TASK_ROOT} poetry install --no-root
 RUN cd ${LAMBDA_TASK_ROOT} poetry install --no-root
 
-# # COPY ./dataservices/post_confirmation_trigger ${LAMBDA_TASK_ROOT}
-
+# COPY ./dataservices/post_confirmation_trigger ${LAMBDA_TASK_ROOT}
 
 COPY function/ ${LAMBDA_TASK_ROOT}
 
-COPY requirements.txt  .
+COPY requirements.txt .
 
 RUN  pip3 install -r requirements.txt --target "${LAMBDA_TASK_ROOT}"
 

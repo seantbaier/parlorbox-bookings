@@ -78,7 +78,7 @@ jobs:
           docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com
 
       - name: Build Lambda Docker
-        run: docker build -t ${APP_NAME} -f ./Dockerfile .
+        run: docker build -t ${APP_NAME} .
 
       - name: Tag Docker Image
         run: |
