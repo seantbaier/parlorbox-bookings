@@ -1,7 +1,8 @@
 import sys
-from pprint import pprint
+from loguru import logger
 
 
 def handler(event, context):
-    pprint("EVENT=", event)
+    logger.info("testing")
+    print("EVENT=", event)
     return "Hello from AWS Lambda using Python" + sys.version + "!"
