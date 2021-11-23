@@ -8,7 +8,9 @@ from dataservices.post_confirmation_trigger.controller import (
 )
 from dataservices.post_confirmation_trigger.event import CognitoTriggerEvent
 from dataservices.post_confirmation_trigger.mock_event import mock_event_data
-from dataservices.post_confirmation_trigger.service import PostConfirmationService
+from dataservices.post_confirmation_trigger.service import (
+    PostConfirmationService,
+)
 
 
 def local_setup(service: PostConfirmationService):
@@ -35,8 +37,8 @@ def handler(event: CognitoTriggerEvent, context: Any):
     logger.info("Starting Lambda Execution")
     pprint(event)
 
-    if not isinstance(event, CognitoTriggerEvent):
-        event = CognitoTriggerEvent(**event)
+    # if not isinstance(event, CognitoTriggerEvent):
+    # event = CognitoTriggerEvent(**event)
 
     logger.debug(event)
 
@@ -53,7 +55,7 @@ def handler(event: CognitoTriggerEvent, context: Any):
 
 if __name__ == "__main__":
     service = PostConfirmationService()
-    mock_event = local_setup(service)
+    # mock_event = local_setup(service)
     logger.debug("Successfully setup local event")
-    handler(mock_event, {})
-    local_teardown(service)
+    handler(event={}, context={})
+    # local_teardown(service)

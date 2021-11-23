@@ -1,4 +1,4 @@
-from dataservices.config import settings
+from function.config import settings
 
 SELLERS_USERGROUP = "seller"
 VA_USERGROUP = "virtualAssistant"
