@@ -79,16 +79,19 @@ jobs:
           docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com
 
       - name: Build Lambda Docker
-        run: docker build -t ${{ env.FUNCTION_NAME }} -f ./Dockerfile .
+        run:
+          docker build -t ${{ steps.vars.outputs.branch }}-${{ env.APP_NAME }}-${{
+          env.FUNCTION_NAME }} -f ./Dockerfile .
 
       - name: Tag Docker Image
         run: |
-          docker tag ${{ steps.vars.outputs.branch }}-${APP_NAME}-${{ env.FUNCTION_NAME }}:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/${{ steps.vars.outputs.branch }}-${FUNCTION_NAME}:latest
+          docker tag ${{ steps.vars.outputs.branch }}-${APP_NAME}-${{ env.FUNCTION_NAME }}:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/${{ steps.vars.outputs.branch }}-${{ env.APP_NAME }}-${{ env.FUNCTION_NAME }}:latest
 
       - name: Push Docker Image
         run:
           docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/${{
-          steps.vars.outputs.branch }}-${APP_NAME}-${{ env.FUNCTION_NAME }}:latest
+          steps.vars.outputs.branch }}-${{ env.APP_NAME }}-${{ env.FUNCTION_NAME
+          }}:latest
 
       - name: Deploy new Lambda
         run: |
