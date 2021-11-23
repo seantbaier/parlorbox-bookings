@@ -7,6 +7,7 @@ on:
 
 env:
   FUNCTION_NAME: post-confirmation-trigger
+  APP_NAME: studiosauce
 jobs:
   lint-and-test:
     runs-on: ubuntu-latest
@@ -87,7 +88,7 @@ jobs:
       - name: Push Docker Image
         run:
           docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/${{
-          steps.vars.outputs.branch }}-${FUNCTION_NAME}:latest
+          steps.vars.outputs.branch }}-${APP_NAME}-${FUNCTION_NAME}:latest
 
       - name: Deploy new Lambda
         run: |
