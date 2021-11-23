@@ -15,4 +15,4 @@ RUN poetry install --no-root
 
 COPY function/ ${LAMBDA_TASK_ROOT}
 
-CMD [ "app.handler" ]
+CMD [ "main.handler" ]
