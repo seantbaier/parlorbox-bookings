@@ -1,8 +1,8 @@
-from dataservices.post_confirmation_trigger.controller import (
+from function.controller import (
     PostConfirmationTriggerController,
 )
-from dataservices.post_confirmation_trigger.event import CognitoTriggerEvent
-from dataservices.post_confirmation_trigger.mock_event import mock_cognito_user
+from function.event import CognitoTriggerEvent
+from function.mock_event import mock_cognito_user
 
 controller = PostConfirmationTriggerController()
 

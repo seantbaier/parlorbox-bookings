@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Any
 
-from .event import CognitoTriggerEvent
+from function.event import CognitoTriggerEvent
 from vendors import CognitoIdp, Dynamodb
 
 client = CognitoIdp()

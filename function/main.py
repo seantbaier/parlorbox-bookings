@@ -3,13 +3,13 @@ from typing import Any
 
 from loguru import logger
 
-from .controller import (
+from function.controller import (
     PostConfirmationTriggerController,
 )
-from .event import CognitoTriggerEvent
+from function.event import CognitoTriggerEvent
 
-from .mock_event import mock_event_data
-from .service import (
+from function.mock_event import mock_event_data
+from function.service import (
     PostConfirmationService,
 )
 
@@ -38,17 +38,10 @@ def handler(event: CognitoTriggerEvent, context: Any):
     logger.info("Starting Lambda Execution")
     pprint(event)
 
-    # if not isinstance(event, CognitoTriggerEvent):
-    # event = CognitoTriggerEvent(**event)
-
-    logger.debug(event)
-
-    # Method to be invoked goes here
-    logger.info("Successfully invoked lambda")
+    if not isinstance(event, CognitoTriggerEvent):
+        event = CognitoTriggerEvent(**event)
 
     controller = PostConfirmationTriggerController(event)
     controller.add_user_to_groups()
 
-    # This return will be reflected in the CloudWatch logs
-    # but doesn't actually do anything
-    return event.dict()
+    return event.json()

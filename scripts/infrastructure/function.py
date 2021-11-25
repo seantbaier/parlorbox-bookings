@@ -27,7 +27,7 @@ def create_function(client, function_name: str):
         response = client.create_function(
             FunctionName=function_name,
             Runtime="python3.8",
-            Handler="dataservices/post_confirmation_trigger/main.handler",
+            Handler="function/main.handler",
             MemorySize=128,
             Code={"ZipFile": zipfile},
             Role="arn:aws:iam::123456:role/irrelevant",
@@ -41,7 +41,7 @@ def create_function(client, function_name: str):
 def invoke_function(client, function_name: str):
     payload = open(
         Path.cwd().joinpath(
-            "dataservices", "post_confirmation_trigger", "payload.json"
+            "function", "payload.json"
         ),
         "r",
     ).read()

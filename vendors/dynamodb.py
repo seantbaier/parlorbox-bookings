@@ -1,6 +1,6 @@
 from loguru import logger
 
-from dataservices.vendors.client import get_resource
+from vendors.client import get_resource
 
 
 class Dynamodb:

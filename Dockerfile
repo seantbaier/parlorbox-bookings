@@ -13,6 +13,6 @@ WORKDIR ${LAMBDA_TASK_ROOT}
 
 RUN poetry install --no-root
 
-COPY function/ ${LAMBDA_TASK_ROOT}
+COPY . ${LAMBDA_TASK_ROOT}
 
-CMD [ "main.handler" ]
+CMD [ "function.main.handler" ]
