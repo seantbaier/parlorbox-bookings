@@ -3,12 +3,12 @@ from typing import Any
 
 from loguru import logger
 
-from dataservices.post_confirmation_trigger.controller import (
+from function.controller import (
     PostConfirmationTriggerController,
 )
-from dataservices.post_confirmation_trigger.event import CognitoTriggerEvent
-from dataservices.post_confirmation_trigger.mock_event import mock_event_data
-from dataservices.post_confirmation_trigger.service import (
+from function.event import CognitoTriggerEvent
+from function.mock_event import mock_event_data
+from function.service import (
     PostConfirmationService,
 )
 
