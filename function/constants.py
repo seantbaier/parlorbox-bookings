@@ -1,4 +1,4 @@
-from function.config import settings
+from .config import settings
 
 SELLERS_USERGROUP = "seller"
 VA_USERGROUP = "virtualAssistant"
