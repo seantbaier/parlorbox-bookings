@@ -1,27 +1,64 @@
 from pprint import pprint
 from typing import Any
-
+import httpx
+import json
+import boto3
+from botocore.config import Config
 from loguru import logger
 
-from function.controller import (
-    PostConfirmationTriggerController,
-)
+
 from function.event import CognitoTriggerEvent
+from function.config import settings
+from function.queries import SELLER_QUERY
 
-from function.mock_event import mock_event_data
-from function.service import (
-    PostConfirmationService,
+
+config = Config(
+    region_name="us-east-1",
+    signature_version="v4",
+    retries={"max_attempts": 10, "mode": "standard"},
 )
 
-
-def local_setup(service: PostConfirmationService):
-    cognito_user = service.create_cognito_user()
-    mock_event = mock_event_data(cognito_user)
-    return mock_event
+client = boto3.client("cognito-idp", config=config)
 
 
-def local_teardown(service: PostConfirmationService):
-    service.delete_cognito_user()
+def add_user_to_group(user_pool_id: str, username: str, group_name: str):
+    try:
+        response = client.admin_add_user_to_group(
+            UserPoolId=user_pool_id,
+            Username=username,
+            GroupName=group_name,
+        )
+        logger.success(f"username={username}, group={group_name}")
+        return response
+    except Exception as e:
+        logger.error(
+            f"username={username}, userpool={user_pool_id}, group={group_name}"
+        )
+        logger.error(e)
+
+
+def create_user_item(username: str, email: str):
+    query = {
+        "query": SELLER_QUERY,
+        "variables": {
+            "createSellerId": username,
+            "email": email,
+        },
+    }
+
+    try:
+        url = settings.HTTP_GRAPHQL_ENDPOINT
+        logger.info(f"HTTP_GRAPHQL_ENDPOINT={url}")
+        r = httpx.post(url=url, json=query)
+        if r.status_code == 200:
+            logger.success(
+                f"Successfully created username={username}, email={email}"
+            )
+            print(json.dumps(r.json(), indent=2))
+            return r.json()
+    except Exception as e:
+        logger.error(e)
+        raise e
 
 
 def handler(event: CognitoTriggerEvent, context: Any):
@@ -38,10 +75,21 @@ def handler(event: CognitoTriggerEvent, context: Any):
     logger.info("Starting Lambda Execution")
     pprint(event)
 
-    if not isinstance(event, CognitoTriggerEvent):
-        event = CognitoTriggerEvent(**event)
+    cognito_event = event
+    if not isinstance(cognito_event, CognitoTriggerEvent):
+        cognito_event = CognitoTriggerEvent(**event)
 
-    controller = PostConfirmationTriggerController(event)
-    controller.add_user_to_groups()
+    username = event["userName"]
+    user_pool_id = event["userPoolId"]
+    request = event["request"]
 
-    return event.json()
+    user_attributes = request["userAttributes"]
+    group_name = user_attributes["custom:userGroup"]
+    email = user_attributes["email"]
+
+    add_user_to_group(
+        user_pool_id=user_pool_id, username=username, group_name=group_name
+    )
+    create_user_item(username=username, email=email)
+
+    return event
