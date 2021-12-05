@@ -1,13 +1,12 @@
-import httpx
 import json
+
 import boto3
+import httpx
 from botocore.config import Config
 from loguru import logger
 
-
 from function.config import settings
 from function.queries import SELLER_QUERY
-
 
 config = Config(
     region_name="us-east-1",
