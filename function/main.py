@@ -1,5 +1,3 @@
-from pprint import pprint
-from typing import Any
 import httpx
 import json
 import boto3
@@ -7,7 +5,6 @@ from botocore.config import Config
 from loguru import logger
 
 
-from function.event import CognitoTriggerEvent
 from function.config import settings
 from function.queries import SELLER_QUERY
 
@@ -61,7 +58,7 @@ def create_user_item(username: str, email: str):
         raise e
 
 
-def handler(event: CognitoTriggerEvent, context: Any):
+def handler(event: dict, context: dict):
     """The central handler function called when the Lambda function is invoked.
     Arguments:
         event {dict} -- Dictionary containing contents of the event that
@@ -73,11 +70,7 @@ def handler(event: CognitoTriggerEvent, context: Any):
         the function but which is reflected in CloudWatch
     """
     logger.info("Starting Lambda Execution")
-    pprint(event)
-
-    cognito_event = event
-    if not isinstance(cognito_event, CognitoTriggerEvent):
-        cognito_event = CognitoTriggerEvent(**event)
+    print(event)
 
     username = event["userName"]
     user_pool_id = event["userPoolId"]
