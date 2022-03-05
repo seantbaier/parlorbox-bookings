@@ -1,13 +1,13 @@
-ENV=development
-APP_NAME=studiosauce
-FUNCTION_NAME=post-confirmation-trigger
+ENV=dev
+APP_NAME=proper-booking-service
+FUNCTION_NAME=${ENV}-${APP_NAME}
 
-IMAGE_TAG=${ENV}-${APP_NAME}-${FUNCTION_NAME}
-AWS_ACCOUNT_ID=266568383880
+IMAGE_TAG=${APP_NAME}
+AWS_ACCOUNT_ID=616285773385
 AWS_DEFAULT_REGION=us-east-1
 
 # Build Docker Image
-docker build -t ${IMAGE_TAG} -f ./Dockerfile .
+docker build -f ./Dockerfile -t ${IMAGE_TAG} .
 
 # Tag Docker Image
 docker tag ${IMAGE_TAG}:latest \
@@ -22,5 +22,5 @@ docker push ${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/${IMAGE_TAG}:lates
 
 # Deploy new Lambda
 aws lambda update-function-code \
---function-name ${ENV}-${FUNCTION_NAME} \
---image-uri ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${ENV}-${APP_NAME}-${FUNCTION_NAME}:latest
+--function-name ${FUNCTION_NAME} \
+--image-uri ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${APP_NAME}:latest

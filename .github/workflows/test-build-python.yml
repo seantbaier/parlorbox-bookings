@@ -2,12 +2,11 @@ name: Build and Test
 on:
   push:
     branches:
-      - development
-      - staging
+      - main
 
 env:
-  FUNCTION_NAME: post-confirmation-trigger
-  APP_NAME: studiosauce
+  FUNCTION_NAME: proper-booking-service
+  APP_NAME: proper
 jobs:
   lint-and-test:
     runs-on: ubuntu-latest
