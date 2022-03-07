@@ -37,7 +37,5 @@ exclude = '''/(
   | docker)/'''
 
 [tool.poetry.scripts]
-"ls:build" = "scripts.infrastructure.build:build"
-"ls:destroy" = "scripts.infrastructure.destroy:destroy"
-clean = "scripts.utils:clean"
-build = "scripts.utils:build"
+invoke = "scripts.utils:invoke"
+deploy = "scripts.utils:deploy"

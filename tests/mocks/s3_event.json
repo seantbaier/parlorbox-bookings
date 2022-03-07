@@ -1,0 +1,38 @@
+{
+    "Records": [
+        {
+            "awsRegion": "us-east-1",
+            "eventName": "ObjectCreated:Put",
+            "eventSource": "aws:s3",
+            "eventTime": "2022-03-05T21:42:30.285Z",
+            "eventVersion": "2.1",
+            "requestParameters": {
+                "sourceIPAddress": "3.87.194.54"
+            },
+            "responseElements": {
+                "x-amz-id-2": "yb163ugfDgLqhraM71O14NvJJfwrKoOjhBmCZ94k7k0r7dAk8z6ZJCscGUtKamdDq80SLYSmdCuQJ+9FrIhLytmVAYkcSOubvK3yPg+3DgA=",
+                "x-amz-request-id": "D9R35QXFS029WXFJ"
+            },
+            "s3": {
+                "bucket": {
+                    "arn": "arn:aws:s3:::proper-poc",
+                    "name": "proper-poc",
+                    "ownerIdentity": {
+                        "principalId": "AULM4M7AS6TND"
+                    }
+                },
+                "configurationId": "06fdca04-eece-4b52-af47-497b61358741",
+                "object": {
+                    "eTag": "3eddc72d6d3aeb3890233fd49845a7aa",
+                    "key": "2022/03/05/21/PUT-S3-wIkQG-1-2022-03-05-21-37-28-0a392263-3e81-45a1-a7a8-a63b3087b994",
+                    "sequencer": "006223D9463FC8D3C9",
+                    "size": 2219
+                },
+                "s3SchemaVersion": "1.0"
+            },
+            "userIdentity": {
+                "principalId": "AWS:AROAY67L6TZET2ZY6YS4O:AWSFirehoseToS3"
+            }
+        }
+    ]
+}
