@@ -1,8 +1,9 @@
 locals {
-  account_vars = read_terragrunt_config(find_in_parent_folders("account.hcl"))
+  environment_vars = read_terragrunt_config(find_in_parent_folders("env.hcl"))
+  account_vars     = read_terragrunt_config(find_in_parent_folders("account.hcl"))
 
-  app_name     = local.account_vars.locals.app_name
-  account_name = local.account_vars.locals.account_name
+  app_name    = local.account_vars.locals.app_name
+  environment = local.environment_vars.locals.environment
 }
 
 
@@ -18,8 +19,7 @@ include {
 
 # These are the variables we have to pass in to use the module specified in the terragrunt configuration above
 inputs = {
-  #   environment             = local.account_name
-  bucket = "${local.account_name}-${local.app_name}-events"
+  bucket = "${local.app_name}-events-${local.environment}"
   acl    = "private"
 
   versioning = {
