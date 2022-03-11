@@ -3,8 +3,8 @@
 # terragrunt.hcl configuration.
 locals {
   account_name   = "sandbox"
-  app_name       = "proper"
-  domain_name    = "deadbear.io"
+  app_name       = "parlorbox"
+  domain_name    = "parlorbox.com"
   aws_account_id = "616285773385"
   aws_profile    = "terraform"
 }

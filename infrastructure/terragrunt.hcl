@@ -17,7 +17,7 @@ remote_state {
   }
 
   config = {
-    bucket = "${local.account_name}-${local.app_name}-terraform"
+    bucket = "${local.app_name}-terraform-${local.account_name}"
 
     key            = "${path_relative_to_include()}/terraform.tfstate"
     region         = "us-east-2"
