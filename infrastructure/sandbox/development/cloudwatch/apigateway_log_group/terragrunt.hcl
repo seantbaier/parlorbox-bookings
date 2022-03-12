@@ -1,3 +1,4 @@
+
 locals {
   environment_vars = read_terragrunt_config(find_in_parent_folders("env.hcl"))
   account_vars     = read_terragrunt_config(find_in_parent_folders("account.hcl"))
@@ -10,19 +11,20 @@ locals {
 # Terragrunt will copy the Terraform configurations specified by the source parameter, along with any files in the
 # working directory, into a temporary folder, and execute your Terraform commands in that folder.
 terraform {
-  source = "tfr:///terraform-aws-modules/s3-bucket/aws//.?version=2.14.1"
+  source = "tfr:///terraform-aws-modules/cloudwatch/aws//modules/log-group?version=2.4.1"
 }
+
 
 include {
   path = find_in_parent_folders()
 }
 
-# These are the variables we have to pass in to use the module specified in the terragrunt configuration above
-inputs = {
-  bucket = "${local.app_name}-events-${local.environment}"
-  acl    = "private"
 
-  versioning = {
-    enabled = false
-  }
+
+
+inputs = {
+  name              = "${local.app_name}-apigateway-logs-${local.environment}"
+  retention_in_days = 120
+
+
 }
