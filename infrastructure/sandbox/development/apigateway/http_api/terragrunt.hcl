@@ -1,17 +1,19 @@
 locals {
   environment_vars = read_terragrunt_config(find_in_parent_folders("env.hcl"))
   account_vars     = read_terragrunt_config(find_in_parent_folders("account.hcl"))
+  region_vars      = read_terragrunt_config(find_in_parent_folders("region.hcl"))
 
   app_name    = local.account_vars.locals.app_name
   domain_name = local.account_vars.locals.domain_name
   environment = local.environment_vars.locals.environment
+  region      = local.region_vars.locals.aws_region
 }
 
 
 # Terragrunt will copy the Terraform configurations specified by the source parameter, along with any files in the
 # working directory, into a temporary folder, and execute your Terraform commands in that folder.
 terraform {
-  source = "tfr:///terraform-aws-modules/apigateway-v2/aws//.?version=1.5.1"
+  source = "../../../..//modules/aws_apigateway/apigatewayv2"
 }
 
 
@@ -28,11 +30,17 @@ dependency "apigateway_log_group" {
   config_path = "../../cloudwatch/apigateway_log_group"
 }
 
+
+dependency "event_bus" {
+  config_path = "../../event_bridge/event_bus"
+}
+
 # These are the variables we have to pass in to use the module specified in the terragrunt configuration above
 inputs = {
   name          = "${local.app_name}-api-${local.environment}"
   description   = "HTTP API Gateway for Square Webhooks"
   protocol_type = "HTTP"
+  region        = local.region
 
   cors_configuration = {
     # TODO Lock this down to only accept  requests from Sqaure Webhooks API connect.squareupsandbox.com
@@ -49,19 +57,7 @@ inputs = {
   default_stage_access_log_destination_arn = dependency.apigateway_log_group.outputs.cloudwatch_log_group_arn
   default_stage_access_log_format          = "$context.identity.sourceIp - - [$context.requestTime] \"$context.httpMethod $context.routeKey $context.protocol\" $context.status $context.responseLength $context.requestId $context.integrationErrorMessage"
 
-  # Routes and integrations
-  integrations = {
-    "POST /" = {
-      lambda_arn             = "arn:aws:lambda:eu-west-1:052235179155:function:my-function"
-      payload_format_version = "2.0"
-      timeout_milliseconds   = 12000
-    }
+  eventbridge_bus_name = dependency.event_bus.outputs.eventbridge_bus_name
+  eventbridge_bus_arn  = dependency.event_bus.outputs.eventbridge_bus_arn
 
-    "$default" = {
-      lambda_arn = "arn:aws:lambda:eu-west-1:052235179155:function:my-default-function"
-    }
-  }
-  tags = {
-    Name = "http-apigateway"
-  }
 }

@@ -4,6 +4,7 @@ locals {
 
   app_name    = local.account_vars.locals.app_name
   domain_name = local.account_vars.locals.domain_name
+  account_id  = local.account_vars.locals.aws_account_id
   environment = local.environment_vars.locals.environment
 }
 
@@ -24,6 +25,10 @@ dependency "events_firehose_stream" {
   config_path = "../../kinesis/events_firehose_stream"
 }
 
+dependency "eventbridge_log_group" {
+  config_path = "../eventbridge_log_group"
+}
+
 # These are the variables we have to pass in to use the module specified in the terragrunt configuration above
 inputs = {
   bus_name  = "${local.app_name}-event-bus-${local.environment}"
@@ -31,9 +36,16 @@ inputs = {
 
   rules = {
     "${local.app_name}-bookings-${local.environment}" = {
-      description   = "Capture all booking events data"
+      description   = "Capture all BOOKINGS events data"
       event_pattern = jsonencode({ "source" : ["connect.squareupsandbox.com"], "detail-type" : ["BOOKINGS"] })
       enabled       = true
+    }
+    "${local.app_name}-catchall-${local.environment}" = {
+      description = "Capture all event data"
+      event_pattern = jsonencode({
+        "account" : [local.account_id]
+      })
+      enabled = true
     }
   }
 
@@ -43,7 +55,14 @@ inputs = {
         name            = "send-bookings-to-firehose"
         arn             = dependency.events_firehose_stream.outputs.arn
         attach_role_arn = true
-      },
+      }
+    ]
+
+    "${local.app_name}-catchall-${local.environment}" = [
+      {
+        name = "log-events-to-cloudwatch"
+        arn  = dependency.eventbridge_log_group.outputs.cloudwatch_log_group_arn
+      }
     ]
   }
 
