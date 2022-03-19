@@ -1,3 +1,9 @@
+variable "create" {
+  description = "Create resource"
+  type        = bool
+  default     = true
+}
+
 variable "record_enabled" {
   type        = bool
   default     = true

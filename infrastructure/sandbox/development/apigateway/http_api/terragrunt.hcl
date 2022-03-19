@@ -13,7 +13,7 @@ locals {
 # Terragrunt will copy the Terraform configurations specified by the source parameter, along with any files in the
 # working directory, into a temporary folder, and execute your Terraform commands in that folder.
 terraform {
-  source = "../../../..//modules/aws_apigateway/apigatewayv2"
+  source = "../../../..//modules/aws_apigateway/http_api"
 }
 
 
@@ -35,9 +35,14 @@ dependency "event_bus" {
   config_path = "../../event_bridge/event_bus"
 }
 
+dependency "hosted_zone" {
+  config_path = "../../../globals/route53/hosted_zone"
+}
+
 # These are the variables we have to pass in to use the module specified in the terragrunt configuration above
 inputs = {
   name          = "${local.app_name}-api-${local.environment}"
+  stage_name    = local.environment
   description   = "HTTP API Gateway for Square Webhooks"
   protocol_type = "HTTP"
   region        = local.region
@@ -50,14 +55,19 @@ inputs = {
   }
 
   # Custom domain
-  domain_name                 = local.domain_name
+  hosted_zone_id              = dependency.hosted_zone.outputs.zone_id
+  domain_name                 = "${local.environment}.${local.domain_name}"
   domain_name_certificate_arn = dependency.certificate.outputs.acm_certificate_arn
 
   # Access logs
-  default_stage_access_log_destination_arn = dependency.apigateway_log_group.outputs.cloudwatch_log_group_arn
-  default_stage_access_log_format          = "$context.identity.sourceIp - - [$context.requestTime] \"$context.httpMethod $context.routeKey $context.protocol\" $context.status $context.responseLength $context.requestId $context.integrationErrorMessage"
+  stage_access_log_destination_arn = dependency.apigateway_log_group.outputs.cloudwatch_log_group_arn
+  stage_access_log_format          = "$context.identity.sourceIp - - [$context.requestTime] \"$context.httpMethod $context.routeKey $context.protocol\" $context.status $context.responseLength $context.requestId $context.integrationErrorMessage"
 
   eventbridge_bus_name = dependency.event_bus.outputs.eventbridge_bus_name
   eventbridge_bus_arn  = dependency.event_bus.outputs.eventbridge_bus_arn
 
+
+  tags = {
+    Environment = local.environment
+  }
 }

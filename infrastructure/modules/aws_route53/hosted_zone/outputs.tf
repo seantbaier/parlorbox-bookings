@@ -8,3 +8,8 @@ output "nameservers" {
   description = "name_servers - A list of name servers in associated (or default) delegation set. Find more about delegation sets in AWS docs."
   value       = aws_route53_zone.this.name_servers
 }
+
+output "route53_hosted_zone_name" {
+  description = "name - (Required) This is the name of the hosted zone."
+  value       = aws_route53_zone.this.name
+}
