@@ -9,6 +9,12 @@ variable "s3_bucket_arn" {
   default     = null
 }
 
+variable "s3_bucket_name" {
+  description = "S3 destination bucket name."
+  type        = string
+  default     = null
+}
+
 variable "lambda_arn" {
   description = "S3 destination bucket ARN."
   type        = string
@@ -43,4 +49,14 @@ variable "prefix" {
   description = "(Optional) The 'YYYY/MM/DD/HH' time format prefix is automatically used for delivered S3 files. You can specify an extra prefix to be added in front of the time format prefix. Note that if the prefix ends with a slash, it appears as a folder in the S3 bucket"
   type        = string
   default     = null
+}
+
+variable "aws_account_id" {
+  description = "AWS Account Id"
+  type        = string
+}
+
+variable "aws_region" {
+  description = "AWS Region"
+  type        = string
 }
