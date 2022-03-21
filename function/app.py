@@ -59,18 +59,19 @@ def get_object(bucket: str, key: str):
         return e
 
 
-def handle_booking_event(record: dict):
+def handle_booking_event(event: dict):
     logger.info(f"BOOKING S3 PUT EVENT:::{BOOKINGS_EVENT}")
+    return event
 
-    result = []
-    s3 = record["s3"]
-    bucket = s3["bucket"]["name"]
-    key = s3["object"]["key"]
+    # result = []
+    # s3 = record["s3"]
+    # bucket = s3["bucket"]["name"]
+    # key = s3["object"]["key"]
 
-    response = get_object(bucket=bucket, key=key)
-    result.append(response)
+    # response = get_object(bucket=bucket, key=key)
+    # result.append(response)
 
-    return result
+    # return result
 
 
 def handle_stream(event: dict):
@@ -110,10 +111,13 @@ def handler(event, context):
 
         # TODO Might need some more checks here
         # like event["source"], and I think we can add whatever we want
-        if "Records" in event:
-            for record in event["Records"]:
-                result = handle_booking_event(record)
+        detail_type = event.get("detail-type", None)
+        if detail_type == BOOKINGS_EVENT:
+            result = handle_booking_event(event)
             return result
+            # for record in event["Records"]:
+            #     result = handle_booking_event(record)
+            # return result
 
         print_break(text="Unknown event triggered.")
     except Exception as e:
@@ -122,7 +126,7 @@ def handler(event, context):
 
 
 def mock_event() -> dict:
-    event_file = open(Path.cwd().joinpath("tests/event.json"), "r")
+    event_file = open(Path.cwd().joinpath("tests/mocks/event_bridge_booking.json"), "r")
     yield json.loads(event_file.read())
     event_file.close()
 

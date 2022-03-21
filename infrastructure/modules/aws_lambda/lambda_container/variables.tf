@@ -31,3 +31,20 @@ variable "trusted_entities" {
   type        = any
   default     = []
 }
+
+variable "architectures" {
+  description = "(Optional) Instruction set architecture for your Lambda function. Valid values are ['x86_64'] and ['arm64']. Default is ['x86_64']. Removing this attribute, function's architecture stay the same."
+  type        = any
+  default     = null
+}
+
+variable "package_type" {
+  description = "(Optional) Lambda deployment package type. Valid values are Zip and Image. Defaults to Zip."
+  type        = string
+}
+
+variable "entry_point" {
+  description = "(Optional) Entry point to your application, which is typically the location of the runtime executable."
+  type        = list(string)
+  default     = null
+}

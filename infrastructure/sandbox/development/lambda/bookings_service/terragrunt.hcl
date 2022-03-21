@@ -27,6 +27,7 @@ inputs = {
   environment   = local.environment
 
   create_package = false
+  architectures  = ["arm64"]
 
   image_uri    = dependency.docker_image.outputs.image_uri
   package_type = "Image"

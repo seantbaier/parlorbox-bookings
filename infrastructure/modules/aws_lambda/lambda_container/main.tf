@@ -16,7 +16,12 @@ resource "aws_lambda_function" "this" {
   role          = aws_iam_role.this.arn
   image_uri     = var.image_uri
 
-  package_type = "Image"
+  package_type  = var.package_type
+  architectures = var.architectures
+
+  image_config {
+    entry_point = var.entry_point
+  }
 
   dynamic "environment" {
     for_each = length(keys(var.environment_variables)) == 0 ? [] : [true]
