@@ -13,7 +13,7 @@ locals {
 resource "aws_lambda_function" "this" {
   function_name = var.function_name
   timeout       = 300
-  role          = aws_iam_role.this.arn
+  role          = aws_iam_role.lambda[0].arn
   image_uri     = var.image_uri
 
   package_type  = var.package_type
@@ -35,23 +35,6 @@ resource "aws_lambda_function" "this" {
     Terraform   = "true"
     Environment = var.environment
   }
-}
-
-data "aws_iam_policy_document" "assume_role_policy" {
-  statement {
-    actions = ["sts:AssumeRole"]
-
-    principals {
-      type        = "Service"
-      identifiers = ["lambda.amazonaws.com"]
-    }
-  }
-}
-
-resource "aws_iam_role" "this" {
-  name                = "${var.function_name}-role"
-  assume_role_policy  = data.aws_iam_policy_document.assume_role_policy.json
-  managed_policy_arns = ["arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"]
 }
 
 
@@ -88,6 +71,6 @@ EOF
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_logs" {
-  role       = aws_iam_role.this.name
+  role       = aws_iam_role.lambda[0].name
   policy_arn = aws_iam_policy.lambda_logging.arn
 }

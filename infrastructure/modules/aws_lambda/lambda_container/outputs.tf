@@ -22,5 +22,5 @@ output "version" {
 
 output "role_name" {
   description = "ARN of the role attatched to the lambda"
-  value       = aws_iam_role.this.name
+  value       = aws_iam_role.lambda[0].name
 }

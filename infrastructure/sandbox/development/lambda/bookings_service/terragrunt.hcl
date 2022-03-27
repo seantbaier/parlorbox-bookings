@@ -22,6 +22,10 @@ dependency "docker_image" {
   config_path = "../../docker/image"
 }
 
+dependency "merchant_table" {
+  config_path = "../../dynamodb/merchant_table"
+}
+
 inputs = {
   function_name = local.function_name
   environment   = local.environment
@@ -38,6 +42,30 @@ inputs = {
   environment_variables = {
     LOG_LEVEL = "debug"
   }
+
+
+  attach_policy_json = true
+  policy_json = jsonencode(
+    {
+      "Version" : "2012-10-17",
+      "Statement" : [
+        {
+          "Effect" : "Allow",
+          "Action" : [
+            "dynamodb:GetItem",
+            "dynamodb:BatchGetItem",
+            "dynamodb:ConditionCheckItem",
+            "dynamodb:Query",
+            "dynamodb:Scan",
+            "dynamodb:BatchWriteItem",
+            "dynamodb:DeleteItem",
+            "dynamodb:PutItem",
+            "dynamodb:UpdateItem"
+          ],
+          "Resource" : [dependency.merchant_table.outputs.dynamodb_table_arn]
+        }
+      ]
+  })
 
   tags = {
     Name        = local.function_name
