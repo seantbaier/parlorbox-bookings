@@ -38,32 +38,44 @@ inputs = {
   role_name        = "${local.app_name}-event-bus-role-${local.environment}"
   role_description = "${local.environment} event Bus Role"
 
-  kinesis_firehose_target_arn = dependency.events_firehose_stream.outputs.arn
-  cloudwatch_target_arn       = dependency.eventbridge_log_group.outputs.cloudwatch_log_group_arn
 
+  rules = {
+    "${local.app_name}-bookings-${local.environment}" = {
+      description   = "Capture all booking events data"
+      event_pattern = jsonencode({ "source" : ["connect.squareupsandbox.com"], "detail-type" : ["BOOKINGS"] })
+      enabled       = true
+    }
+  }
 
+  targets = {
+    "${local.app_name}-bookings-${local.environment}" = [
+      {
+        name            = "send-bookings-to-firehose"
+        arn             = dependency.events_firehose_stream.outputs.arn
+        attach_role_arn = true
+      },
+      {
+        name = "log-orders-to-cloudwatch"
+        arn  = dependency.eventbridge_log_group.outputs.cloudwatch_log_group_arn
+      }
+    ]
+  }
 
-  #     "${local.app_name}-catchall-${local.environment}" = [
-  #       {
-  #         name = "log-events-to-cloudwatch"
-  #         arn  = dependency.eventbridge_log_group.outputs.cloudwatch_log_group_arn
-  #       }
-  #     ]
-  #   }
-
-  #   create_archives = true
-  #   archives = {
-  #     "${local.app_name}-archive-${local.environment}" = {
-  #       description    = "Booking Event archive",
-  #       retention_days = 30
-  #       event_pattern  = <<PATTERN
-  #       {
-  #         "source": ["connect.squareupsandbox.com"],
-  #         "detail-type": ["BOOKINGS"]
-  #       }
-  #       PATTERN
-  #     }
-  #   }
+  attach_policy_json = true
+  policy_json = jsonencode(
+    {
+      "Version" : "2012-10-17",
+      "Statement" : [
+        {
+          "Effect" : "Allow",
+          "Action" : [
+            "firehose:PutRecord",
+            "firehose:PutRecordBatch"
+          ],
+          "Resource" : [dependency.events_firehose_stream.outputs.arn]
+        }
+      ]
+  })
 
   tags = {
     Name = "${local.app_name}-event-bus-${local.environment}"
