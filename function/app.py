@@ -8,6 +8,12 @@ from typing import Any, Optional
 from collections import namedtuple
 
 
+from function.services import bookings
+
+
+client = boto3.resource("dynamodb")
+
+
 BOOKINGS_EVENT = "BOOKINGS"
 
 
@@ -61,17 +67,7 @@ def get_object(bucket: str, key: str):
 
 def handle_booking_event(event: dict):
     logger.info(f"BOOKING S3 PUT EVENT:::{BOOKINGS_EVENT}")
-    return event
-
-    # result = []
-    # s3 = record["s3"]
-    # bucket = s3["bucket"]["name"]
-    # key = s3["object"]["key"]
-
-    # response = get_object(bucket=bucket, key=key)
-    # result.append(response)
-
-    # return result
+    return bookings.process_event(client, event)
 
 
 def handle_stream(event: dict):
@@ -113,11 +109,7 @@ def handler(event, context):
         # like event["source"], and I think we can add whatever we want
         detail_type = event.get("detail-type", None)
         if detail_type == BOOKINGS_EVENT:
-            result = handle_booking_event(event)
-            return result
-            # for record in event["Records"]:
-            #     result = handle_booking_event(record)
-            # return result
+            return handle_booking_event(event)
 
         print_break(text="Unknown event triggered.")
     except Exception as e:
