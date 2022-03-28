@@ -35,8 +35,18 @@ inputs = {
     {
       name = "SK"
       type = "S"
-    }
+    },
+    {
+      name = "GSI1PK"
+      type = "S"
+    },
   ]
+
+  global_secondary_indexes = [{
+    name            = "GSI1-MerchantEmail"
+    hash_key        = "GSI1PK"
+    projection_type = "ALL"
+  }]
 
   tags = {
     Terraform   = true

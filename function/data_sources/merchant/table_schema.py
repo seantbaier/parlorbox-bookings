@@ -1,10 +1,9 @@
 from typing import List
 
-from function.data_sources import KeySchema
 
 # TODO break these out into config vars
 table_name = "Merchant-parlorbox-development"
-table_key_schema: List[KeySchema] = [
+table_key_schema: List[dict] = [
     {
         "AttributeName": "PK",
         "KeyType": "HASH",

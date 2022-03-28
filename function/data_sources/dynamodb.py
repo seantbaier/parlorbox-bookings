@@ -17,7 +17,7 @@ ERROR_HELP_STRINGS = {
 }
 
 
-class DynamoDB:
+class DynamoDBDataSource:
     def __init__(self, table_name: str, table_key_schema: dict, client):
         self.table_name = table_name
         self.table = client.Table(table_name)
@@ -65,10 +65,17 @@ class DynamoDB:
         except BaseException as error:
             logger.error(error)
 
-    def delete_item(self, input: dict, ttl: int = None) -> Any:
-        # Do nothing with ttl for now
+    def delete_item(self, input: dict) -> Any:
         try:
-            response = self.table.delete_item(**input)
+            return self.table.delete_item(Key=input)
+        except ClientError as error:
+            self.handle_error(error)
+        except BaseException as error:
+            logger.error(error)
+
+    def query(self, query) -> Any:
+        try:
+            response = self.table.query(**query)
             return response
         except ClientError as error:
             self.handle_error(error)

@@ -1,12 +1,10 @@
+from uuid import uuid4
 import pytest
 import boto3
 
-from function.data_sources import MerchantProvider
-
-
-@pytest.fixture
-def merchant():
-    return {"id": 1, "first_name": "steve", "last_name": "rogers"}
+from function.data_sources import MerchantDataSource
+from function.schemas import Merchant
+from function.data_sources import ItemNotFoundError
 
 
 @pytest.fixture
@@ -15,19 +13,44 @@ def client():
 
 
 @pytest.fixture
-def merchant_provider(client):
-    return MerchantProvider(client)
+def data_source(client):
+    return MerchantDataSource(client)
 
 
-def test_put_merchant(merchant_provider: MerchantProvider, merchant: dict) -> None:
-    result = merchant_provider.put_merchant(merchant)
-    assert result["ResponseMetadata"]["HTTPStatusCode"] == 200
-    merchant_provider.delete_merchant(merchant["id"])
+@pytest.fixture
+def merchant():
+    return {"email": f"{uuid4()}@email.com", "first_name": "steve", "last_name": "rogers"}
 
 
-def test_get_merchant(merchant_provider: MerchantProvider, merchant: dict) -> None:
-    merchant = merchant_provider.get_merchant(merchant["id"])
+@pytest.fixture
+def create_merchant(data_source: MerchantDataSource, merchant: dict) -> None:
+    item = data_source.create_merchant(merchant)
+    yield item
+    delete_input = {"PK": f"MERCHANT#{item.id}", "SK": f"MERCHANT#{item.id}"}
+    data_source.delete_item(delete_input)
 
-    item = merchant["Item"]
-    assert item["PK"] == "MERCHANT#1"
-    assert item["SK"] == "MERCHANT#1"
+
+def test_create_merchant(data_source: MerchantDataSource, merchant: dict) -> None:
+    item = data_source.create_merchant(merchant)
+    assert item.email == merchant["email"]
+    data_source.delete_merchant(item.id)
+
+
+def test_get_merchant(data_source: MerchantDataSource, create_merchant: Merchant) -> None:
+    merchant = data_source.get_merchant(create_merchant.id)
+    assert merchant.PK == f"MERCHANT#{create_merchant.id}"
+    assert merchant.SK == f"MERCHANT#{create_merchant.id}"
+
+
+def test_get_merchant_by_email(data_source: MerchantDataSource, create_merchant: dict) -> None:
+    merchant = data_source.get_merchant_by_email(id=create_merchant.id, email=create_merchant.email)
+    assert merchant.email == create_merchant.email
+
+
+def test_delete_merchant(data_source: MerchantDataSource, merchant: dict) -> None:
+    item = data_source.create_merchant(merchant)
+    data_source.delete_merchant(item.id)
+
+    with pytest.raises(ItemNotFoundError) as excinfo:
+        merchant = data_source.get_merchant(item.id)
+        assert excinfo.type == ItemNotFoundError
