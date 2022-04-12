@@ -3,11 +3,10 @@ from uuid import uuid4
 from pydantic import EmailStr, UUID4
 from boto3.dynamodb.conditions import Key, Attr
 from dataclasses import asdict
-import json
 from botocore.exceptions import ClientError
 
 
-from function.schemas import Merchant, MerchantCreate, Status
+from function.schemas import Merchant, MerchantCreate
 from .table_schema import table_key_schema
 
 APP_NAME = "parlorbox"
@@ -76,8 +75,6 @@ class MerchantDataSource(DynamoDBDataSource):
         response = self.get_item(input, self.ttl)
 
         if success(response) and "Item" not in response:
-            key = input.get("Key")
-            pk = key.get("PK") if key else None
             raise ItemNotFoundError(
                 operation="GET_ITEM",
                 message=f"Item Not Found PK={input['Key']['PK']}",
