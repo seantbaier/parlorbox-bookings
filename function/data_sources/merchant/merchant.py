@@ -52,13 +52,14 @@ class MerchantDataSource(DynamoDBDataSource):
         return {"Key": {"PK": self._pk(id), "SK": self._sk(id)}}
 
     def _create_merchant_item_input(self, merchant: dict) -> dict:
+        id = uuid4()
         email = merchant["email"]
 
         obj = MerchantCreate(
-            PK=self._pk(email),
-            SK=self._sk(email),
+            PK=self._pk(id),
+            SK=self._sk(id),
             GSIPK=self._gsi_pk(email),
-            id=str(uuid4()),
+            id=str(id),
             first_name=merchant.get("first_name", None),
             last_name=merchant.get("last_name", None),
             email=EmailStr(merchant.get("email")),
@@ -73,11 +74,6 @@ class MerchantDataSource(DynamoDBDataSource):
     def get_merchant(self, id: UUID4) -> Merchant:
         input = self._create_get_item_input(id)
         response = self.get_item(input, self.ttl)
-        from pprint import pprint
-
-        print("\nGET RESPONSE\n")
-
-        pprint(response)
 
         if success(response) and "Item" not in response:
             key = input.get("Key")
@@ -91,22 +87,22 @@ class MerchantDataSource(DynamoDBDataSource):
     def create_merchant(self, merchant: dict) -> Merchant:
         item = self._create_merchant_item_input(merchant=merchant)
         response = self.put_item(item)
-        from pprint import pprint
 
-        pprint(response)
         if not success(response):
             raise MerchantNotCreatedError(operation="PUT_ITEM", message="Failed to create Merchant")
         return Merchant(**item["Item"])
 
     def delete_merchant(self, id: UUID4) -> Merchant:
+        # TODO check for existing item
         item = self._create_delete_item_input(id)
+
         return self.delete_item(item)
 
     def get_merchant_by_email(self, id: UUID4, email: EmailStr) -> Merchant:
         input = {"KeyConditionExpression": Key("PK").eq(self._pk(id)), "FilterExpression": Attr("email").eq(email)}
         response = self.query(input)
 
-        if success(response) and "Item" not in response:
+        if success(response) and "Items" not in response:
             raise ItemNotFoundError(
                 operation="GET_ITEM",
                 message=f"Item Not Found PK={email}",

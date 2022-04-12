@@ -63,14 +63,9 @@ class DynamoDBDataSource:
             logger.error(error)
 
     def put_item(self, input: dict, ttl: int = None) -> Any:
-        from pprint import pprint
-
-        pprint(self.table)
         # Do nothing with ttl for now
         try:
-            response = self.table.put_item(**input)
-            pprint(response)
-            return response
+            return self.table.put_item(**input)
         except ClientError as error:
             self.handle_error(error)
         except BaseException as error:
@@ -81,8 +76,10 @@ class DynamoDBDataSource:
             return self.table.delete_item(Key=input)
         except ClientError as error:
             self.handle_error(error)
+            raise error
         except BaseException as error:
             logger.error(error)
+            raise error
 
     def query(self, query) -> Any:
         try:

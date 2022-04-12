@@ -39,17 +39,13 @@ def test_create_merchant(data_source: MerchantDataSource, merchant: dict) -> Non
 
 def test_get_merchant(data_source: MerchantDataSource, create_merchant: Merchant) -> None:
     merchant = data_source.get_merchant(create_merchant.id)
-    from pprint import pprint
-
-    print("\nMERCHANT\n")
-    pprint(merchant)
     assert merchant.PK == f"MERCHANT#{create_merchant.id}"
     assert merchant.SK == f"MERCHANT#{create_merchant.id}"
 
 
-# def test_get_merchant_by_email(data_source: MerchantDataSource, create_merchant: Merchant) -> None:
-#     merchant = data_source.get_merchant_by_email(id=create_merchant.id, email=create_merchant.email)
-#     assert merchant.email == create_merchant.email
+def test_get_merchant_by_email(data_source: MerchantDataSource, create_merchant: Merchant) -> None:
+    merchant = data_source.get_merchant_by_email(id=create_merchant.id, email=create_merchant.email)
+    assert merchant.email == create_merchant.email
 
 
 def test_delete_merchant(data_source: MerchantDataSource, merchant: dict) -> None:
