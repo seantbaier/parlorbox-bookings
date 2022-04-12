@@ -3,6 +3,7 @@ from uuid import uuid4
 from pydantic import EmailStr, UUID4
 from boto3.dynamodb.conditions import Key, Attr
 from dataclasses import asdict
+import json
 from botocore.exceptions import ClientError
 
 
@@ -57,12 +58,12 @@ class MerchantDataSource(DynamoDBDataSource):
             PK=self._pk(email),
             SK=self._sk(email),
             GSIPK=self._gsi_pk(email),
-            id=uuid4(),
+            id=str(uuid4()),
             first_name=merchant.get("first_name", None),
             last_name=merchant.get("last_name", None),
             email=EmailStr(merchant.get("email")),
             waitlist=[],
-            status=Status("active"),
+            status="active",
         )
         return {"Item": asdict(obj)}
 
@@ -72,8 +73,15 @@ class MerchantDataSource(DynamoDBDataSource):
     def get_merchant(self, id: UUID4) -> Merchant:
         input = self._create_get_item_input(id)
         response = self.get_item(input, self.ttl)
+        from pprint import pprint
+
+        print("\nGET RESPONSE\n")
+
+        pprint(response)
 
         if success(response) and "Item" not in response:
+            key = input.get("Key")
+            pk = key.get("PK") if key else None
             raise ItemNotFoundError(
                 operation="GET_ITEM",
                 message=f"Item Not Found PK={input['Key']['PK']}",
@@ -83,6 +91,9 @@ class MerchantDataSource(DynamoDBDataSource):
     def create_merchant(self, merchant: dict) -> Merchant:
         item = self._create_merchant_item_input(merchant=merchant)
         response = self.put_item(item)
+        from pprint import pprint
+
+        pprint(response)
         if not success(response):
             raise MerchantNotCreatedError(operation="PUT_ITEM", message="Failed to create Merchant")
         return Merchant(**item["Item"])
@@ -98,6 +109,6 @@ class MerchantDataSource(DynamoDBDataSource):
         if success(response) and "Item" not in response:
             raise ItemNotFoundError(
                 operation="GET_ITEM",
-                message=f"Item Not Found PK={input['Key']['PK']}",
+                message=f"Item Not Found PK={email}",
             )
         return Merchant(**response["Items"][0])

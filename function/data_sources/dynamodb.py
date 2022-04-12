@@ -63,9 +63,13 @@ class DynamoDBDataSource:
             logger.error(error)
 
     def put_item(self, input: dict, ttl: int = None) -> Any:
+        from pprint import pprint
+
+        pprint(self.table)
         # Do nothing with ttl for now
         try:
             response = self.table.put_item(**input)
+            pprint(response)
             return response
         except ClientError as error:
             self.handle_error(error)
