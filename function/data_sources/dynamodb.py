@@ -1,6 +1,7 @@
-from typing import Any
+from typing import Any, Union
 from loguru import logger
 from botocore.exceptions import ClientError
+from pydantic import UUID4
 
 
 ERROR_HELP_STRINGS = {
@@ -24,9 +25,15 @@ class DynamoDBDataSource:
         self.tablekey_schema = table_key_schema
         self.client = client
 
-    def handle_error(self, error: dict) -> None:
-        error_code = error.response["Error"]["Code"]
-        error_message = error.response["Error"]["Message"]
+    def handle_error(self, error: Union[ClientError, BaseException]) -> None:
+        if isinstance(error, BaseException):
+            logger.error("Unknown Error")
+            raise error
+
+        error_code = "InternalServerError"
+        if isinstance(error, ClientError):
+            error_code = error.response["Error"]["Code"]
+            error_message = error.response["Error"]["Message"]
 
         error_help_string = ERROR_HELP_STRINGS[error_code]
 
@@ -36,13 +43,13 @@ class DynamoDBDataSource:
             )
         )
 
-    def _create_get_item_input(self) -> dict:
+    def _create_get_item_input(self, id: UUID4) -> dict:
         raise NotImplementedError()
 
     def _create_put_item_input(self) -> dict:
         raise NotImplementedError()
 
-    def _create_delete_item_input(self) -> dict:
+    def _create_delete_item_input(self, id: UUID4) -> dict:
         raise NotImplementedError()
 
     def get_item(self, input: dict, ttl: int = None) -> Any:

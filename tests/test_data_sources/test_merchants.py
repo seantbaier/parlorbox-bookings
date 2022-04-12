@@ -1,6 +1,7 @@
 from uuid import uuid4
 import pytest
 import boto3
+from typing import Generator
 
 from function.data_sources import MerchantDataSource
 from function.schemas import Merchant
@@ -23,7 +24,7 @@ def merchant():
 
 
 @pytest.fixture
-def create_merchant(data_source: MerchantDataSource, merchant: dict) -> None:
+def create_merchant(data_source: MerchantDataSource, merchant: dict) -> Generator:
     item = data_source.create_merchant(merchant)
     yield item
     delete_input = {"PK": f"MERCHANT#{item.id}", "SK": f"MERCHANT#{item.id}"}
@@ -42,7 +43,7 @@ def test_get_merchant(data_source: MerchantDataSource, create_merchant: Merchant
     assert merchant.SK == f"MERCHANT#{create_merchant.id}"
 
 
-def test_get_merchant_by_email(data_source: MerchantDataSource, create_merchant: dict) -> None:
+def test_get_merchant_by_email(data_source: MerchantDataSource, create_merchant: Merchant) -> None:
     merchant = data_source.get_merchant_by_email(id=create_merchant.id, email=create_merchant.email)
     assert merchant.email == create_merchant.email
 

@@ -8,7 +8,7 @@ BOOKINGS_EVENT = "BOOKINGS"
 
 
 class BookingsService:
-    def process_bookings_event(self, client, event: dict) -> dict:
+    def process_event(self, client, event: dict) -> dict:
         logger.info(f"BOOKING S3 PUT EVENT:::{BOOKINGS_EVENT}")
         merchants = MerchantDataSource(client)
 

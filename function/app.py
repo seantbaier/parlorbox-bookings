@@ -4,7 +4,7 @@ import json
 from loguru import logger
 from pathlib import Path
 from pprint import pprint
-from typing import Any, Optional
+from typing import Any, Optional, Generator
 from collections import namedtuple
 
 
@@ -26,12 +26,12 @@ def print_break(text: str, data: Optional[Any] = None) -> None:
         print(data)
 
 
-def decode_response(content: bytes) -> dict:
-    logger.debug("DECODE_RESPONSE")
-    for line in content.readlines():
-        result = line.decode("utf-8")
-        logger.debug(type(result))
-        return result
+# def decode_response(content: bytes) -> dict:
+#     logger.debug("DECODE_RESPONSE")
+#     for line in content.readlines():
+#         result = line.decode("utf-8")
+#         logger.debug(type(result))
+#         return result
 
 
 def get_object(bucket: str, key: str):
@@ -117,7 +117,7 @@ def handler(event, context):
     return event
 
 
-def mock_event() -> dict:
+def mock_event() -> Generator:
     event_file = open(Path.cwd().joinpath("tests/mocks/event_bridge_booking.json"), "r")
     yield json.loads(event_file.read())
     event_file.close()
