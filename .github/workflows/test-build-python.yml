@@ -94,5 +94,5 @@ jobs:
       - name: Deploy new Lambda
         run: |
           aws lambda update-function-code \
-          --function-name ${{ env.FUNCTION_NAME }}-${{ steps.vars.outputs.branch }} \
+          --function-name ${{ env.APP_NAME }}-${{ env.FUNCTION_NAME }}-${{ steps.vars.outputs.branch }} \
           --image-uri ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/${{ env.APP_NAME }}-${{ env.FUNCTION_NAME }}-${{ steps.vars.outputs.branch }}:latest
