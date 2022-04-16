@@ -80,8 +80,7 @@ jobs:
 
       - name: Build Lambda Docker
         run:
-          docker build -t ${{ steps.vars.outputs.branch }}-${{ env.APP_NAME }}-${{
-          env.FUNCTION_NAME }} -f ./Dockerfile .
+          docker build -t ${{ env.APP_NAME }}-${{env.FUNCTION_NAME }}-${{ steps.vars.outputs.branch }} -f ./Dockerfile .
 
       - name: Tag Docker Image
         run: |
