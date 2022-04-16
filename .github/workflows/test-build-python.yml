@@ -85,11 +85,11 @@ jobs:
       - name: Tag Docker Image
         run: |
           docker tag ${{ steps.vars.outputs.branch }}-${{ env.APP_NAME }}-${{ env.FUNCTION_NAME }}:latest \
-          ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/${{ steps.vars.outputs.branch }}-${{ env.APP_NAME }}-${{ env.FUNCTION_NAME }}:latest
+          ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/${{ steps.vars.outputs.branch }}-${{ env.APP_NAME }}-${{ env.FUNCTION_NAME }}:latest
 
       - name: Push Docker Image
         run: |
-          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/${{ steps.vars.outputs.branch }}-${{ env.APP_NAME }}-${{ env.FUNCTION_NAME }}:latest
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/${{ steps.vars.outputs.branch }}-${{ env.APP_NAME }}-${{ env.FUNCTION_NAME }}:latest
 
       - name: Deploy new Lambda
         run: |
