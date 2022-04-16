@@ -1,12 +1,13 @@
-from function.data_sources.dynamodb import DynamoDBDataSource
-from uuid import uuid4
-from pydantic import EmailStr, UUID4
-from boto3.dynamodb.conditions import Key, Attr
 from dataclasses import asdict
+from uuid import uuid4
+
+from boto3.dynamodb.conditions import Attr, Key
 from botocore.exceptions import ClientError
+from pydantic import UUID4, EmailStr
 
-
+from function.data_sources.dynamodb import DynamoDBDataSource
 from function.schemas import Merchant, MerchantCreate
+
 from .table_schema import table_key_schema
 
 APP_NAME = "parlorbox"

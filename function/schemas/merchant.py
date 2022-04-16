@@ -1,7 +1,7 @@
-from pydantic import EmailStr
-from typing import List, Optional
 from dataclasses import dataclass
+from typing import List, Optional
 
+from pydantic import EmailStr
 
 from function.schemas.customer import Customer
 

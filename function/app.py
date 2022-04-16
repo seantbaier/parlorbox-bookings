@@ -1,15 +1,14 @@
 import io
-import boto3
 import json
-from loguru import logger
+from collections import namedtuple
 from pathlib import Path
 from pprint import pprint
-from typing import Any, Optional, Generator
-from collections import namedtuple
+from typing import Any, Generator, Optional
 
+import boto3
+from loguru import logger
 
 from function.services import bookings
-
 
 client = boto3.resource("dynamodb")
 

@@ -1,8 +1,6 @@
 from loguru import logger
 
-
 from function.data_sources import MerchantDataSource
-
 
 BOOKINGS_EVENT = "BOOKINGS"
 

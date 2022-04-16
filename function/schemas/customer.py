@@ -1,5 +1,6 @@
-from pydantic import BaseModel, EmailStr, UUID4
 from typing import Optional
+
+from pydantic import UUID4, BaseModel, EmailStr
 
 from function.schemas.common import Status
 

@@ -1,1 +1,1 @@
-from .merchant.merchant import MerchantDataSource, ItemNotFoundError  # noqa
+from .merchant.merchant import ItemNotFoundError, MerchantDataSource  # noqa
