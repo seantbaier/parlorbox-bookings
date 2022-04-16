@@ -7,7 +7,7 @@ on:
 
 env:
   FUNCTION_NAME: booking-service
-  APP_NAME: proper
+  APP_NAME: parlorbox
 jobs:
   lint-and-test:
     runs-on: ubuntu-latest
@@ -85,15 +85,15 @@ jobs:
 
       - name: Tag Docker Image
         run: |
-          docker tag ${{ steps.vars.outputs.branch }}-${{ env.APP_NAME }}-${{ env.FUNCTION_NAME }}:latest \
-          ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/${{ steps.vars.outputs.branch }}-${{ env.APP_NAME }}-${{ env.FUNCTION_NAME }}:latest
+          docker tag ${{ env.APP_NAME }}-${{ env.FUNCTION_NAME }}-${{ steps.vars.outputs.branch }}:latest \
+          ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/${{ env.APP_NAME }}-${{ env.FUNCTION_NAME }}-${{ steps.vars.outputs.branch }}:latest
 
       - name: Push Docker Image
         run: |
-          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/${{ steps.vars.outputs.branch }}-${{ env.APP_NAME }}-${{ env.FUNCTION_NAME }}:latest
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/${{ env.APP_NAME }}-${{ env.FUNCTION_NAME }}-${{ steps.vars.outputs.branch }}:latest
 
       - name: Deploy new Lambda
         run: |
           aws lambda update-function-code \
-          --function-name ${{ steps.vars.outputs.branch }}-${{ env.FUNCTION_NAME }} \
-          --image-uri ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/${{ steps.vars.outputs.branch }}-${{ env.APP_NAME }}-${{ env.FUNCTION_NAME }}:latest
+          --function-name ${{ env.FUNCTION_NAME }}-${{ steps.vars.outputs.branch }} \
+          --image-uri ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_DEFAULT_REGION }}.amazonaws.com/${{ env.APP_NAME }}-${{ env.FUNCTION_NAME }}-${{ steps.vars.outputs.branch }}:latest
