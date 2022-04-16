@@ -3,9 +3,10 @@ on:
   push:
     branches:
       - main
+      - development
 
 env:
-  FUNCTION_NAME: proper-booking-service
+  FUNCTION_NAME: booking-service
   APP_NAME: proper
 jobs:
   lint-and-test:
