@@ -39,4 +39,6 @@ exclude = '''/(
 
 [tool.poetry.scripts]
 invoke = "scripts.utils:invoke"
-deploy = "scripts.utils:deploy"
+deploy = "scripts.utils:deploy_bookings"
+"run:bookings" = "scripts.utils:run_bookings"
+"clean:terragrunt" = "scripts.utils:clean_terragrunt"

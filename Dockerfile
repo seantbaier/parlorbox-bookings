@@ -7,7 +7,7 @@ RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-
   ln -sf /opt/poetry/bin/poetry && \
   poetry config virtualenvs.create false
 
-ADD function/ .
+COPY function/ function/
 
 COPY pyproject.toml .
 
@@ -15,4 +15,4 @@ WORKDIR ${LAMBDA_TASK_ROOT}
 
 RUN poetry install --no-root
 
-CMD [ "app.handler" ]
+CMD [ "function.app.handler" ]
